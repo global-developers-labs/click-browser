@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click Browser - The Agent</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: #f4f7f6;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .toolbar {
+            background: #ffffff;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        .logo {
+            font-weight: bold;
+            color: #0052cc;
+            font-size: 1.2rem;
+            white-space: nowrap;
+        }
+        .address-bar {
+            flex-grow: 1;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #dfe1e5;
+            outline: none;
+            font-size: 14px;
+            transition: box-shadow 0.3s;
+        }
+        .address-bar:focus {
+            box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+        }
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        #browser-view {
+            flex-grow: 1;
+            border: none;
+            background: white;
+        }
+        .ai-sidebar {
+            width: 300px;
+            background: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s;
+        }
+        .ai-header {
+            padding: 15px;
+            background: #0052cc;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ai-chat {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 85%;
+            font-size: 13px;
+        }
+        .user-msg {
+            background: #e3f2fd;
+            align-self: flex-start;
+        }
+        .ai-msg {
+            background: #f5f5f5;
+            align-self: flex-end;
+        }
+        .ai-input-area {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        .ai-input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #0052cc;
+            color: white;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background: #003d99;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <div class="logo">Click Browser</div>
+            <button class="btn" onclick="goBack()">←</button>
+            <button class="btn" onclick="goForward()">→</button>
+            <input type="text" id="url-input" class="address-bar" placeholder="أدخل الرابط أو ابحث هنا..." onkeydown="handleUrl(event)">
+            <button class="btn" onclick="toggleAI()">الوكيل الذكي</button>
+        </div>
+        <div class="main-content">
+            <div class="ai-sidebar" id="ai-sidebar">
+                <div class="ai-header">
+                    <span>الوكيل الذكي (Agent)</span>
+                    <small>Global Company</small>
+                </div>
+                <div class="ai-chat" id="ai-chat">
+                    <div class="message ai-msg">مرحباً بك في Click Browser! أنا وكيلك الذكي، كيف يمكنني مساعدتك اليوم؟</div>
+                </div>
+                <div class="ai-input-area">
+                    <input type="text" class="ai-input" placeholder="اسأل الوكيل..." onkeydown="handleAIChat(event)">
+                </div>
+            </div>
+            <webview id="browser-view" src="https://www.google.com" style="width:100%; height:100%"></webview>
+        </div>
+    </div>
+
+    <script>
+        const webview = document.getElementById('browser-view');
+        const urlInput = document.getElementById('url-input');
+        const aiSidebar = document.getElementById('ai-sidebar');
+
+        function handleUrl(e) {
+            if (e.key === 'Enter') {
+                let url = urlInput.value;
+                if (!url.startsWith('http')) {
+                    url = 'https://' + url;
+                }
+                webview.src = url;
+            }
+        }
+
+        webview.addEventListener('did-finish-load', () => {
+            urlInput.value = webview.getURL();
+        });
+
+        function goBack() { if (webview.canGoBack()) webview.goBack(); }
+        function goForward() { if (webview.canGoForward()) webview.goForward(); }
+        
+        function toggleAI() {
+            if (aiSidebar.style.display === 'none') {
+                aiSidebar.style.display = 'flex';
+            } else {
+                aiSidebar.style.display = 'none';
+            }
+        }
+
+        function handleAIChat(e) {
+            if (e.key === 'Enter') {
+                const chat = document.getElementById('ai-chat');
+                const input = e.target;
+                if (input.value.trim() === '') return;
+
+                // Add user message
+                const userDiv = document.createElement('div');
+                userDiv.className = 'message user-msg';
+                userDiv.textContent = input.value;
+                chat.appendChild(userDiv);
+
+                // Simulate AI response (Developers can plug their API here)
+                setTimeout(() => {
+                    const aiDiv = document.createElement('div');
+                    aiDiv.className = 'message ai-msg';
+                    aiDiv.textContent = "هذا نموذج تجريبي. يمكن للمطورين ربط مفاتيح API الخاصة بهم هنا لتفعيل الذكاء الاصطناعي بالكامل.";
+                    chat.appendChild(aiDiv);
+                    chat.scrollTop = chat.scrollHeight;
+                }, 1000);
+
+                input.value = '';
+                chat.scrollTop = chat.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
