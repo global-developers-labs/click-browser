@@ -2,7 +2,10 @@
 
 **Click Browser from Global Company**
 
-![Click Browser Logo](./logo.jpg)
+<p align="center">
+  <img src="./logo.jpg" width="45%" />
+  <img src="./banner.jpg" width="45%" />
+</p>
 
 
 
