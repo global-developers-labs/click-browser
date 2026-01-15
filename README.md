@@ -4,7 +4,7 @@
 
 ![Click Browser Logo](./logo.jpg)
 
-[📥 Download Source Code (ZIP)](./click-browser-source.zip)
+
 
 ## 🌟 Overview
 **Click Browser** is a powerful, modern, and open-source web browser built on top of **Chromium** (via Electron). It is designed to be more than just a browser; it is an **AI-powered Agent** that assists users in their daily web activities.
